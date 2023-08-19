@@ -27,7 +27,7 @@ set(CMAKE_DOCUMENT_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/docs)
 set(BUILD_SHARED_LIBS ON)
 
 # Test
-# include(CTest)
+include(CTest)
 
 # Module
 include(${CMAKE_SOURCE_DIR}/etc/cmake/box_message.cmake)
