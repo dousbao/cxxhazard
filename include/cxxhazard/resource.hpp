@@ -48,6 +48,8 @@ class resource_pool {
 	friend domain;
 
 public:
+	resource_pool(void) : _head(nullptr) {}
+	
 	~resource_pool(void) noexcept
 	{
 		for (auto p = _head.load(); p != nullptr; ) {
