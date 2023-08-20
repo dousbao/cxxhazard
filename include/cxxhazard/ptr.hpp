@@ -41,10 +41,10 @@ public:
 
 			_res->_ptr.store(copy, std::memory_order_relaxed);
 
-			std::atomic_thread_fence(std::memory_order_release);
-
-			if (copy == src.load(std::memory_order_relaxed))
+			if (copy == src.load(std::memory_order_relaxed)) {
+				_res->_protecting.store(true, std::memory_order_release);
 				return static_cast<T *>(copy);
+			}
 		}
 	}
 	
@@ -53,6 +53,7 @@ public:
 		assert(_res != nullptr);
 
 		_res->_ptr.store(nullptr, std::memory_order_relaxed);
+		_res->_protecting.store(false, std::memory_order_release);
 	}
 
 private:
