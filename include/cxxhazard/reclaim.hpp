@@ -23,7 +23,7 @@ public:
 
 	~reclaim_pool(void) noexcept
 	{
-		for (auto p = _head.load(); p != nullptr; ) {
+		for (auto p = _head.load(std::memory_order_acquire); p != nullptr; ) {
 			auto copy = p;
 			p = p->_next;
 
@@ -40,20 +40,21 @@ public:
 
 		new_node->_ptr = ptr;
 		new_node->_deleter = std::forward<Func>(deleter);
-		new_node->_next = _head.load();
+		new_node->_next = _head.load(std::memory_order_acquire);
 
-		while (!_head.compare_exchange_weak(new_node->_next, new_node))
+		while (!_head.compare_exchange_weak(new_node->_next, new_node,
+			std::memory_order_release, std::memory_order_relaxed))
 			;
 
-		return _cnt.fetch_add(1);
+		return _cnt.fetch_add(1, std::memory_order_relaxed);
 	}
 
 	template <typename Func>
 	void reclaim(Func &&filter)
 	{
-		_cnt.store(0);
+		_cnt.store(0, std::memory_order_relaxed);
 
-		node *list = _head.exchange(nullptr);
+		node *list = _head.exchange(nullptr, std::memory_order_acquire);
 		node *new_head = nullptr, *new_tail = nullptr;
 		int new_size = 0;
 
@@ -77,12 +78,13 @@ public:
 		}
 
 		if (new_head) {
-			new_tail->_next = _head.load();
+			new_tail->_next = _head.load(std::memory_order_acquire);
 			
-			while (!_head.compare_exchange_weak(new_tail->_next, new_head))
+			while (!_head.compare_exchange_weak(new_tail->_next, new_head,
+				std::memory_order_release, std::memory_order_relaxed))
 				;
 
-			_cnt.fetch_add(new_size);
+			_cnt.fetch_add(new_size, std::memory_order_relaxed);
 		}
 	}
 
