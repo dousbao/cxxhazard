@@ -46,7 +46,7 @@ public:
 	template <typename T, typename Func>
 	void retire(T *ptr, Func &&deleter)
 	{
-		if (_reclaim->emplace_back(ptr, std::forward<Func>(deleter)) >= _reclaim->_max) {
+		if (_reclaim->emplace(ptr, std::forward<Func>(deleter)) >= _reclaim->_max) {
 			std::unordered_set<void *> is_hazard;
 
 			for (auto p = _resource->_head.load(); p != nullptr; p = p->_next)

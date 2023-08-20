@@ -34,7 +34,7 @@ public:
 
 public:
 	template <typename T, typename Func>
-	int emplace_back(T *ptr, Func &&deleter)
+	int emplace(T *ptr, Func &&deleter)
 	{
 		node *new_node = new node;
 
