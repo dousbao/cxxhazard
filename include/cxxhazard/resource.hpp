@@ -39,7 +39,7 @@ public:
 	}
 
 private:
-	std::atomic<void *>_ptr;
+	std::atomic<void *> _ptr;
 	resource *_next;
 	std::atomic_flag _active;
 };
