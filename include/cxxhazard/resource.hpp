@@ -7,7 +7,7 @@
 namespace cxxhazard {
 
 class resource {
-	friend domain;
+	friend enable_hazard_from_this;
 	friend resource_pool;
 	friend hazard_ptr;
 
@@ -45,7 +45,7 @@ private:
 };
 
 class resource_pool {
-	friend domain;
+	friend enable_hazard_from_this;
 
 public:
 	resource_pool(void) : _head(nullptr) {}

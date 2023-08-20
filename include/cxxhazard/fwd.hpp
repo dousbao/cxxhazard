@@ -3,7 +3,7 @@
 
 namespace cxxhazard {
 
-class domain;
+class enable_hazard_from_this;
 class resource;
 class resource_pool;
 class hazard_ptr;

@@ -1,5 +1,5 @@
-#ifndef __CXXHAZARD_DOMAIN_HPP__
-#define __CXXHAZARD_DOMAIN_HPP__
+#ifndef __CXXHAZARD_ENABLE_HPP__
+#define __CXXHAZARD_ENABLE_HPP__
 
 #include <unordered_set>
 #include <cxxhazard/resource.hpp>
@@ -8,28 +8,28 @@
 
 namespace cxxhazard {
 
-class domain {
+class enable_hazard_from_this {
 public:
-	explicit domain(unsigned int max = 1000) : 
+	explicit enable_hazard_from_this(unsigned int max = 1000) : 
 		_resource(new resource_pool), _reclaim(new reclaim_pool(max)) {}
 
-	domain(const domain &) = delete;
+	enable_hazard_from_this(const enable_hazard_from_this &) = delete;
 
-	domain(domain &&rhs) :
+	enable_hazard_from_this(enable_hazard_from_this &&rhs) :
 		_resource(rhs._resource), _reclaim(rhs._reclaim)
 	{
 		rhs._resource = nullptr;
 		rhs._reclaim = nullptr;
 	}
 
-	virtual ~domain(void) noexcept
+	virtual ~enable_hazard_from_this(void) noexcept
 	{
 		delete _resource;
 		delete _reclaim;
 	}
 
-	domain &operator=(const domain &rhs) = delete;
-	domain &operator=(domain &&rhs) = delete;
+	enable_hazard_from_this &operator=(const enable_hazard_from_this &rhs) = delete;
+	enable_hazard_from_this &operator=(enable_hazard_from_this &&rhs) = delete;
 
 public:
 	inline hazard_ptr make_hazard(void)
@@ -67,4 +67,4 @@ private:
 
 } // namespace cxxhazard
 
-#endif // __CXXHAZARD_DOMAIN_HPP__
+#endif // __CXXHAZARD_ENABLE_HPP__

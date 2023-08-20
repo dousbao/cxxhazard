@@ -8,7 +8,7 @@
 namespace cxxhazard {
 
 class hazard_ptr {
-	friend domain;
+	friend enable_hazard_from_this;
 
 public:
 	explicit hazard_ptr(resource *res) : _res(res) {}

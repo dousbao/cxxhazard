@@ -8,7 +8,7 @@
 namespace cxxhazard {
 
 class reclaim_pool {
-	friend domain;
+	friend enable_hazard_from_this;
 
 private:
 	struct node {
