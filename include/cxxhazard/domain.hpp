@@ -52,7 +52,7 @@ public:
 			for (auto p = _resource->_head.load(); p != nullptr; p = p->_next)
 				is_hazard.insert(p->_ptr.load());
 
-			_reclaim->reclaim([this, &is_hazard](void *ptr){
+			_reclaim->reclaim([&is_hazard](void *ptr){
 				if (is_hazard.count(ptr) != 0)
 					return true;
 				return false;
