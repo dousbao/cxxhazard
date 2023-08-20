@@ -37,11 +37,13 @@ public:
 		assert(_res != nullptr);
 
 		while (true) {
-			void *copy = src.load(std::memory_order_acquire);
+			void *copy = src.load(std::memory_order_relaxed);
 
 			_res->_ptr.store(copy, std::memory_order_relaxed);
 
-			if (copy == src.load(std::memory_order_acquire))
+			std::atomic_thread_fence(std::memory_order_release);
+
+			if (copy == src.load(std::memory_order_relaxed))
 				return static_cast<T *>(copy);
 		}
 	}
