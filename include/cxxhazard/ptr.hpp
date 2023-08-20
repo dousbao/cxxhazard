@@ -21,8 +21,10 @@ public:
 
 	~hazard_ptr(void) noexcept
 	{
-		if (_res)
+		if (_res) {
+			unprotect();
 			_res->unlock();
+		}
 	}
 
 	hazard_ptr &operator=(const hazard_ptr &) = delete;
