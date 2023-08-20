@@ -40,7 +40,7 @@ public:
 			_res->_ptr.store(copy, std::memory_order_relaxed);
 
 			if (copy == src.load(std::memory_order_acquire))
-				return copy;
+				return static_cast<T *>(copy);
 		}
 	}
 	
