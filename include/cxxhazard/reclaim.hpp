@@ -18,8 +18,8 @@ private:
 	};
 
 public:
-	explicit reclaim_pool(unsigned int max) :
-		_head(nullptr), _cnt(0), _max(max) {}
+	reclaim_pool(void) :
+		_head(nullptr), _cnt(0) {}
 
 	~reclaim_pool(void) noexcept
 	{
@@ -90,8 +90,7 @@ public:
 
 private:
 	std::atomic<node *> _head;
-	std::atomic<unsigned int> _cnt;
-	unsigned int _max;
+	std::atomic<std::size_t> _cnt;
 };
 
 } // namespace cxxhazard
