@@ -3,7 +3,7 @@
 
 #include <cxxhazard/fwd.hpp>
 #include <cxxhazard/ptr.hpp>
-#include <cxxhazard/domain.hpp>
+#include <cxxhazard/enable.hpp>
 #include <cxxhazard/reclaim.hpp>
 #include <cxxhazard/resource.hpp>
 
