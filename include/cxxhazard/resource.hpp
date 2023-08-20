@@ -49,6 +49,34 @@ class resource_pool {
 	friend enable_hazard_from_this;
 
 public:
+	class unique_resource {
+	public:
+		explicit unique_resource(resource_pool &pool) :
+			_pool(pool), _res(pool.acquire()) {}
+
+		unique_resource(const unique_resource &) = delete;
+		unique_resource(unique_resource &&) = delete;
+
+		~unique_resource(void) noexcept
+		{
+			_pool.release(_res);
+		}
+
+		unique_resource &operator=(const unique_resource &) = delete;
+		unique_resource &operator=(unique_resource &&) = delete;
+
+	public:
+		inline resource *get(void) noexcept
+		{
+			return _res;
+		}
+
+	private:
+		resource_pool &_pool;
+		resource *_res;
+	};
+
+public:
 	resource_pool(void) : _head(nullptr) {}
 	
 	~resource_pool(void) noexcept
@@ -61,6 +89,11 @@ public:
 	}
 
 public:
+	unique_resource *make_unique_resource(void)
+	{
+		return new unique_resource(*this);
+	}
+
 	resource *acquire(void)
 	{
 		auto old_head = _head.load(std::memory_order_acquire);

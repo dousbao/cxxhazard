@@ -11,19 +11,19 @@ class hazard_ptr {
 	friend enable_hazard_from_this;
 
 public:
-	explicit hazard_ptr(resource *res) : _res(res) {}
+	explicit hazard_ptr(resource_pool::unique_resource *res) : _holder(res) {}
 
 	hazard_ptr(const hazard_ptr &) = delete;
-	hazard_ptr(hazard_ptr &&rhs) : _res(nullptr)
+	hazard_ptr(hazard_ptr &&rhs) : _holder(nullptr)
 	{
-		std::swap(_res, rhs._res);
+		std::swap(_holder, rhs._holder);
 	}
 
 	~hazard_ptr(void) noexcept
 	{
-		if (_res) {
+		if (_holder) {
 			unprotect();
-			_res->unlock();
+			delete _holder;
 		}
 	}
 
@@ -34,15 +34,15 @@ public:
 	template <typename T>
 	T *protect(const std::atomic<T *> &src)
 	{
-		assert(_res != nullptr);
+		assert(_holder != nullptr);
 
 		while (true) {
 			void *copy = src.load(std::memory_order_relaxed);
 
-			_res->_ptr.store(copy, std::memory_order_relaxed);
+			_holder->get()->_ptr.store(copy, std::memory_order_relaxed);
 
 			if (copy == src.load(std::memory_order_relaxed)) {
-				_res->_protecting.store(true, std::memory_order_release);
+				_holder->get()->_protecting.store(true, std::memory_order_release);
 				return static_cast<T *>(copy);
 			}
 		}
@@ -50,14 +50,14 @@ public:
 	
 	void unprotect(void)
 	{
-		assert(_res != nullptr);
+		assert(_holder != nullptr);
 
-		_res->_ptr.store(nullptr, std::memory_order_relaxed);
-		_res->_protecting.store(false, std::memory_order_release);
+		_holder->get()->_ptr.store(nullptr, std::memory_order_relaxed);
+		_holder->get()->_protecting.store(false, std::memory_order_release);
 	}
 
 private:
-	resource *_res;
+	resource_pool::unique_resource *_holder;
 };
 
 } // namespace cxxhazard

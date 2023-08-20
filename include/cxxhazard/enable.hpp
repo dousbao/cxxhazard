@@ -34,7 +34,7 @@ public:
 public:
 	inline hazard_ptr make_hazard(void)
 	{
-		return hazard_ptr(_resource->acquire());
+		return hazard_ptr(_resource->make_unique_resource());
 	}
 
 	template <typename T>
