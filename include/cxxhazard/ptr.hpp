@@ -45,7 +45,7 @@ public:
 				break;
 		}
 
-		ptr = copy;
+		ptr = static_cast<T *>(copy);
 	}
 	
 	void unprotect(void)
