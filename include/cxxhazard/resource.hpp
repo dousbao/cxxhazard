@@ -13,7 +13,7 @@ class resource {
 
 public:
 	resource(void) : 
-		_ptr(nullptr), _next(nullptr), _active(ATOMIC_FLAG_INIT) {}
+		_ptr(nullptr), _next(nullptr), _locking(ATOMIC_FLAG_INIT) {}
 
 	resource(const resource &) = delete;
 	resource(resource &&) = delete;
@@ -24,7 +24,7 @@ public:
 public:
 	inline bool try_lock(void) noexcept
 	{
-		return !_active.test_and_set(std::memory_order_acquire);
+		return !_locking.test_and_set(std::memory_order_acquire);
 	}
 
 	inline void lock(void) noexcept
@@ -35,13 +35,13 @@ public:
 
 	inline void unlock(void) noexcept
 	{
-		_active.clear(std::memory_order_release);
+		_locking.clear(std::memory_order_release);
 	}
 
 private:
 	std::atomic<void *> _ptr;
 	resource *_next;
-	std::atomic_flag _active;
+	std::atomic_flag _locking;
 };
 
 class resource_pool {
