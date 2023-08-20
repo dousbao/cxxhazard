@@ -30,22 +30,18 @@ public:
 
 public:
 	template <typename T>
-	void protect(const std::atomic<T *> &src, T *&ptr)
+	T *protect(const std::atomic<T *> &src)
 	{
 		assert(_res != nullptr);
 
-		void *copy;
-
 		while (true) {
-			copy = src.load(std::memory_order_acquire);
+			void *copy = src.load(std::memory_order_acquire);
 
 			_res->_ptr.store(copy, std::memory_order_relaxed);
 
 			if (copy == src.load(std::memory_order_acquire))
-				break;
+				return copy;
 		}
-
-		ptr = static_cast<T *>(copy);
 	}
 	
 	void unprotect(void)
