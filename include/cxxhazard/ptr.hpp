@@ -42,7 +42,6 @@ public:
 			_holder->get()->_ptr.store(copy, std::memory_order_relaxed);
 
 			if (copy == src.load(std::memory_order_relaxed)) {
-				_holder->get()->_protecting.store(true, std::memory_order_release);
 				return static_cast<T *>(copy);
 			}
 		}
@@ -53,7 +52,6 @@ public:
 		assert(_holder != nullptr);
 
 		_holder->get()->_ptr.store(nullptr, std::memory_order_relaxed);
-		_holder->get()->_protecting.store(false, std::memory_order_release);
 	}
 
 private:

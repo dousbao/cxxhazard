@@ -50,7 +50,7 @@ public:
 			std::unordered_set<void *> is_hazard;
 
 			for (auto p = _resource->_head.load(std::memory_order_acquire); p != nullptr; p = p->_next) {
-				if (p->_protecting.load(std::memory_order_acquire))
+				if (p->_ptr.load(std::memory_order_acquire))
 					is_hazard.insert(p->_ptr.load(std::memory_order_relaxed));
 			}
 

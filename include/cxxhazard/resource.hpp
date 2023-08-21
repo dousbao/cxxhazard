@@ -13,7 +13,7 @@ class resource {
 
 public:
 	resource(void) : 
-		_ptr(nullptr), _next(nullptr), _protecting(false), _locking(ATOMIC_FLAG_INIT) {}
+		_ptr(nullptr), _next(nullptr), _locking(ATOMIC_FLAG_INIT) {}
 
 	resource(const resource &) = delete;
 	resource(resource &&) = delete;
@@ -41,7 +41,6 @@ public:
 private:
 	std::atomic<void *> _ptr;
 	resource *_next;
-	std::atomic<bool> _protecting;
 	std::atomic_flag _locking;
 };
 
