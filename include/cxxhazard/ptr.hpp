@@ -37,7 +37,7 @@ public:
 		while (true) {
 			void *copy = src.load(std::memory_order_relaxed);
 
-			_holder->get()->_ptr.store(copy, std::memory_order_relaxed);
+			_holder->get()->_ptr.store(copy, std::memory_order_release);
 
 			if (copy == src.load(std::memory_order_relaxed)) {
 				return static_cast<T *>(copy);
@@ -47,7 +47,7 @@ public:
 	
 	void unprotect(void)
 	{
-		_holder->get()->_ptr.store(nullptr, std::memory_order_relaxed);
+		_holder->get()->_ptr.store(nullptr, std::memory_order_release);
 	}
 
 private:
