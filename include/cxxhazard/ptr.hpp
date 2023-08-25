@@ -1,3 +1,11 @@
+/**
+ * @file ptr.hpp
+ * @brief The files provides definition of hazard_ptr
+ *
+ * @author dousbao
+ * @date Aug 25 2023
+ */
+
 #ifndef __CXXHAZARD_PTR_HPP__
 #define __CXXHAZARD_PTR_HPP__
 
@@ -6,6 +14,14 @@
 #include <cxxhazard/resource.hpp>
 
 namespace cxxhazard {
+
+/**
+ * @class hazard_ptr
+ * @brief The class provide interface to safely protect/unprotect external pointer
+ *
+ * NOTE: The class is not a RAII class, which acquire/release resource during
+ *     construction/destruction, but only provide interface.
+ */
 
 class hazard_ptr {
 	friend enable_hazard_from_this;
@@ -31,6 +47,18 @@ public:
 	hazard_ptr &operator=(hazard_ptr &&rhs) = delete;
 
 public:
+	/**
+	 * @brief Mark given pointer as hazard
+	 *
+	 * The function takes an external atomic variable which stores a pointer.
+	 * The function will keeps looping until the marked pointer is the 
+	 *
+	 * NOTE: The paramter must be reference to external storage, since other threads
+	 * might "remove" that pointer already before it is marked as hazard.
+	 *
+	 * @param src Atomic reference to external storage, which stores the pointer want to mark
+	 */
+
 	template <typename T>
 	T *protect(const std::atomic<T *> &src) noexcept
 	{
@@ -44,6 +72,10 @@ public:
 			}
 		}
 	}
+
+	/**
+	 * @brief Clear the protecting pointer
+	 */
 	
 	inline void unprotect(void) noexcept
 	{

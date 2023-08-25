@@ -1,3 +1,11 @@
+/**
+ * @file hazard.hpp
+ * @brief This file contains every headers belongs to cxxhazard project.
+ *
+ * @author dousbao
+ * @date Aug 25 2023
+ */
+
 #ifndef __CXXHAZARD_HAZARD_HPP__
 #define __CXXHAZARD_HAZARD_HPP__
 

@@ -1,3 +1,11 @@
+/**
+ * @fiel reclaim.hpp
+ * @brief The file provides interface to manage retired nodes.
+ *
+ * @author dousbao
+ * @date Aug 25 2023
+ */
+
 #ifndef __CXXHAZARD_RECLAIM_HPP__
 #define __CXXHAZARD_RECLAIM_HPP__
 
@@ -8,6 +16,11 @@
 #include <cxxhazard/fwd.hpp>
 
 namespace cxxhazard {
+
+/**
+ * @class reclaim_pool
+ * @brief The class serves as retired node storage/reclaimer
+ */
 
 class reclaim_pool {
 	friend enable_hazard_from_this;
@@ -38,6 +51,19 @@ public:
 	}
 
 public:
+
+	/**
+	 * @brief Emplace a new (internal) node to pool.
+	 *
+	 * NOTE: meet exception when and only when copy/move assignmen operator
+	 *     of deleter throw an exception.
+	 *
+	 * @param ptr Pointer to retire
+	 * @param deleter Function to delete ptr
+	 *
+	 * @return Size of pool before this emplace
+	 */
+
 	template <typename T, typename Func>
 	std::size_t emplace(T *ptr, Func &&deleter)
 	{
@@ -57,6 +83,16 @@ public:
 
 		return _cnt.fetch_add(1, std::memory_order_relaxed);
 	}
+
+	/**
+	 * @brief Reclaim the retired nodes, as long as its not hazard.
+	 *
+	 * The function takes a functor with signature bool(void *) to decide
+	 * whether a given pointer should be reclaimed (whether it's hazard).
+	 * If functor return false, ptr will be reclaimed. Otherwise, does nothing.
+	 *
+	 * @param filter Function to decide whether a pointer can be safely reclaimed.
+	 */
 
 	template <typename Func>
 	void reclaim(Func &&filter) noexcept
