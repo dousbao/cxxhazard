@@ -24,8 +24,10 @@ public:
 
 	virtual ~enable_hazard_from_this(void) noexcept
 	{
-		delete _resource;
-		delete _reclaim;
+		if (_resource)
+			delete _resource;
+		if (_reclaim)
+			delete _reclaim;
 	}
 
 	enable_hazard_from_this &operator=(const enable_hazard_from_this &rhs) = delete;
