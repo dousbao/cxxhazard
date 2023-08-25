@@ -47,16 +47,10 @@ public:
 	void retire(T *ptr, Func &&deleter)
 	{
 		if (_reclaim->emplace(ptr, std::forward<Func>(deleter)) >= _reclaim_level) {
-			std::unordered_set<void *> is_hazard;
-
-			for (auto p = _resource->_head.load(std::memory_order_acquire); p != nullptr; p = p->_next) {
-				if (p->_ptr.load(std::memory_order_acquire))
-					is_hazard.insert(p->_ptr.load(std::memory_order_relaxed));
-			}
-
-			_reclaim->reclaim([&is_hazard](void *ptr){
-				if (is_hazard.count(ptr) != 0)
-					return true;
+			_reclaim->reclaim([this](const void *ptr){
+				for (auto p = _resource->_head.load(std::memory_order_acquire); p != nullptr; p = p->_next)
+					if (p->_ptr.load(std::memory_order_acquire) == ptr)
+						return true;
 				return false;
 			});
 		}
