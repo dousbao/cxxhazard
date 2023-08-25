@@ -41,7 +41,7 @@ public:
 	template <typename T>
 	void retire(T *ptr)
 	{
-		retire(ptr, [ptr](){ delete ptr; });
+		retire(ptr, [ptr]() noexcept { delete ptr; });
 	}
 
 	template <typename T, typename Func>
