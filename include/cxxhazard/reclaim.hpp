@@ -15,6 +15,11 @@ private:
 		node *_next;
 		void *_ptr;
 		std::function<void(void)> _deleter;
+
+		~node(void) noexcept
+		{
+			_deleter();
+		}
 	};
 
 public:
@@ -26,8 +31,6 @@ public:
 		for (auto p = _head.load(std::memory_order_acquire); p != nullptr; ) {
 			auto copy = p;
 			p = p->_next;
-
-			copy->_deleter();
 			delete copy;
 		}
 	}
@@ -62,7 +65,6 @@ public:
 			auto next = p->_next;
 
 			if (filter(p->_ptr) == false) {
-				p->_deleter();
 				delete p;
 			} else {
 				p->_next = new_head;
