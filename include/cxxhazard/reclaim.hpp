@@ -34,7 +34,7 @@ public:
 
 public:
 	template <typename T, typename Func>
-	int emplace(T *ptr, Func &&deleter)
+	std::size_t emplace(T *ptr, Func &&deleter)
 	{
 		node *new_node = new node;
 
