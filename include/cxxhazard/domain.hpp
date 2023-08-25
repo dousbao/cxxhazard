@@ -1,7 +1,6 @@
 #ifndef __CXXHAZARD_DOMAIN_HPP__
 #define __CXXHAZARD_DOMAIN_HPP__
 
-#include <unordered_set>
 #include <cxxhazard/resource.hpp>
 #include <cxxhazard/ptr.hpp>
 #include <cxxhazard/reclaim.hpp>
