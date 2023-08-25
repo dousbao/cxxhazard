@@ -3,6 +3,8 @@
 
 #include <atomic>
 #include <functional>
+#include <exception>
+#include <type_traits>
 #include <cxxhazard/fwd.hpp>
 
 namespace cxxhazard {
@@ -15,6 +17,11 @@ private:
 		node *_next;
 		void *_ptr;
 		std::function<void(void)> _deleter;
+
+		~node(void) noexcept
+		{
+			_deleter();
+		}
 	};
 
 public:
@@ -26,8 +33,6 @@ public:
 		for (auto p = _head.load(std::memory_order_acquire); p != nullptr; ) {
 			auto copy = p;
 			p = p->_next;
-
-			copy->_deleter();
 			delete copy;
 		}
 	}
@@ -36,11 +41,15 @@ public:
 	template <typename T, typename Func>
 	std::size_t emplace(T *ptr, Func &&deleter)
 	{
+		static_assert(std::is_nothrow_invocable_v<Func>);
+
 		node *new_node = new node;
 
-		new_node->_ptr = ptr;
-		new_node->_deleter = std::forward<Func>(deleter);
-		new_node->_next = _head.load(std::memory_order_acquire);
+		try {
+			new_node->_ptr = ptr;
+			new_node->_deleter = std::forward<Func>(deleter);
+			new_node->_next = _head.load(std::memory_order_acquire);
+		} catch (...) { delete new_node; throw std::current_exception(); }
 
 		while (!_head.compare_exchange_weak(new_node->_next, new_node,
 			std::memory_order_release, std::memory_order_relaxed))
@@ -50,7 +59,7 @@ public:
 	}
 
 	template <typename Func>
-	void reclaim(Func &&filter)
+	void reclaim(Func &&filter) noexcept
 	{
 		_cnt.store(0, std::memory_order_relaxed);
 
@@ -58,23 +67,22 @@ public:
 		node *new_head = nullptr, *new_tail = nullptr;
 		int new_size = 0;
 
-		for (auto p = list; p != nullptr; ) {
-			auto next = p->_next;
+		while (list) {
+			auto next = list->_next;
 
-			if (filter(p->_ptr) == false) {
-				p->_deleter();
-				delete p;
+			if (filter(list->_ptr) == false) {
+				delete list;
 			} else {
-				p->_next = new_head;
-				new_head = p;
+				list->_next = new_head;
+				new_head = list;
 
 				if (new_tail == nullptr)
-					new_tail = p;
+					new_tail = list;
 
 				++new_size;
 			}
 
-			p = next;
+			list = next;
 		}
 
 		if (new_head) {

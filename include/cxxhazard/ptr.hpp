@@ -32,7 +32,7 @@ public:
 
 public:
 	template <typename T>
-	T *protect(const std::atomic<T *> &src)
+	T *protect(const std::atomic<T *> &src) noexcept
 	{
 		while (true) {
 			void *copy = src.load(std::memory_order_relaxed);
@@ -45,7 +45,7 @@ public:
 		}
 	}
 	
-	void unprotect(void)
+	inline void unprotect(void) noexcept
 	{
 		_holder->get()->_ptr.store(nullptr, std::memory_order_release);
 	}

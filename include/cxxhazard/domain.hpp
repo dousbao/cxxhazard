@@ -1,7 +1,6 @@
-#ifndef __CXXHAZARD_ENABLE_HPP__
-#define __CXXHAZARD_ENABLE_HPP__
+#ifndef __CXXHAZARD_DOMAIN_HPP__
+#define __CXXHAZARD_DOMAIN_HPP__
 
-#include <unordered_set>
 #include <cxxhazard/resource.hpp>
 #include <cxxhazard/ptr.hpp>
 #include <cxxhazard/reclaim.hpp>
@@ -10,7 +9,7 @@ namespace cxxhazard {
 
 class enable_hazard_from_this {
 public:
-	explicit enable_hazard_from_this(unsigned int reclaim_level = 1000) : 
+	explicit enable_hazard_from_this(std::size_t reclaim_level = 1000) : 
 		_resource(new resource_pool), _reclaim(new reclaim_pool), _reclaim_level(reclaim_level) {}
 
 	enable_hazard_from_this(const enable_hazard_from_this &) = delete;
@@ -66,4 +65,4 @@ private:
 
 } // namespace cxxhazard
 
-#endif // __CXXHAZARD_ENABLE_HPP__
+#endif // __CXXHAZARD_DOMAIN_HPP__
