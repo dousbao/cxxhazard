@@ -34,8 +34,6 @@ public:
 	template <typename T>
 	T *protect(const std::atomic<T *> &src)
 	{
-		assert(_holder != nullptr);
-
 		while (true) {
 			void *copy = src.load(std::memory_order_relaxed);
 
@@ -49,8 +47,6 @@ public:
 	
 	void unprotect(void)
 	{
-		assert(_holder != nullptr);
-
 		_holder->get()->_ptr.store(nullptr, std::memory_order_relaxed);
 	}
 
