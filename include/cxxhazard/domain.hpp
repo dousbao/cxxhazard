@@ -1,5 +1,5 @@
-#ifndef __CXXHAZARD_ENABLE_HPP__
-#define __CXXHAZARD_ENABLE_HPP__
+#ifndef __CXXHAZARD_DOMAIN_HPP__
+#define __CXXHAZARD_DOMAIN_HPP__
 
 #include <unordered_set>
 #include <cxxhazard/resource.hpp>
@@ -66,4 +66,4 @@ private:
 
 } // namespace cxxhazard
 
-#endif // __CXXHAZARD_ENABLE_HPP__
+#endif // __CXXHAZARD_DOMAIN_HPP__
