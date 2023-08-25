@@ -67,22 +67,22 @@ public:
 		node *new_head = nullptr, *new_tail = nullptr;
 		int new_size = 0;
 
-		for (auto p = list; p != nullptr; ) {
-			auto next = p->_next;
+		while (list) {
+			auto next = list->_next;
 
-			if (filter(p->_ptr) == false) {
-				delete p;
+			if (filter(list->_ptr) == false) {
+				delete list;
 			} else {
-				p->_next = new_head;
-				new_head = p;
+				list->_next = new_head;
+				new_head = list;
 
 				if (new_tail == nullptr)
-					new_tail = p;
+					new_tail = list;
 
 				++new_size;
 			}
 
-			p = next;
+			list = next;
 		}
 
 		if (new_head) {
