@@ -4,6 +4,7 @@
 #include <atomic>
 #include <functional>
 #include <exception>
+#include <type_traits>
 #include <cxxhazard/fwd.hpp>
 
 namespace cxxhazard {
@@ -40,6 +41,8 @@ public:
 	template <typename T, typename Func>
 	std::size_t emplace(T *ptr, Func &&deleter)
 	{
+		static_assert(std::is_nothrow_invocable_v<Func>);
+
 		node *new_node = new node;
 
 		try {
@@ -56,7 +59,7 @@ public:
 	}
 
 	template <typename Func>
-	void reclaim(Func &&filter)
+	void reclaim(Func &&filter) noexcept
 	{
 		_cnt.store(0, std::memory_order_relaxed);
 
