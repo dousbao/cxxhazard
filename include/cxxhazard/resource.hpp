@@ -88,7 +88,7 @@ public:
 	}
 
 public:
-	unique_resource *make_unique_resource(void)
+	inline unique_resource *make_unique_resource(void)
 	{
 		return new unique_resource(*this);
 	}
