@@ -9,6 +9,7 @@ namespace cxxhazard {
 class resource {
 	friend enable_hazard_from_this;
 	friend resource_pool;
+	friend hazard_ptr;
 
 public:
 	resource(void) : 
