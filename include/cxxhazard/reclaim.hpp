@@ -3,6 +3,7 @@
 
 #include <atomic>
 #include <functional>
+#include <exception>
 #include <cxxhazard/fwd.hpp>
 
 namespace cxxhazard {
@@ -41,9 +42,11 @@ public:
 	{
 		node *new_node = new node;
 
-		new_node->_ptr = ptr;
-		new_node->_deleter = std::forward<Func>(deleter);
-		new_node->_next = _head.load(std::memory_order_acquire);
+		try {
+			new_node->_ptr = ptr;
+			new_node->_deleter = std::forward<Func>(deleter);
+			new_node->_next = _head.load(std::memory_order_acquire);
+		} catch (...) { delete new_node; throw std::current_exception(); }
 
 		while (!_head.compare_exchange_weak(new_node->_next, new_node,
 			std::memory_order_release, std::memory_order_relaxed))
