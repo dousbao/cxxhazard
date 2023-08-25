@@ -9,7 +9,7 @@ namespace cxxhazard {
 
 class enable_hazard_from_this {
 public:
-	explicit enable_hazard_from_this(unsigned int reclaim_level = 1000) : 
+	explicit enable_hazard_from_this(std::size_t reclaim_level = 1000) : 
 		_resource(new resource_pool), _reclaim(new reclaim_pool), _reclaim_level(reclaim_level) {}
 
 	enable_hazard_from_this(const enable_hazard_from_this &) = delete;
