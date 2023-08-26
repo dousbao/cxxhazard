@@ -75,3 +75,11 @@ if(BUILD_TESTING)
 	message(STATUS "Configuring test units")
 	add_subdirectory(test)
 endif()
+
+# -----------------------------------------
+# Install
+# -----------------------------------------
+install(
+	DIRECTORY ${CMAKE_SOURCE_DIR}/include/cxxhazard
+	TYPE INCLUDE
+)
