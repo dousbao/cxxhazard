@@ -61,7 +61,7 @@ public:
 
 		dest = *old_head->_data;
 
-		retire(old_head, [old_head](){
+		retire(old_head, [old_head]() noexcept {
 			delete old_head->_data;
 			delete old_head;
 		});
@@ -94,14 +94,14 @@ int main(void)
 	for (int i = 0; i < cnt; ++i)
 		s.push(i);
 
-	for (int i = 0; i < std::thread::hardware_concurrency(); ++i)
+	for (auto i =std::thread::hardware_concurrency(); i > 0; --i)
 		pool.emplace_back([](){
 			int buf;
 			while (s.peek(buf))
 				;
 		});
 
-	for (int i = 0; i < std::thread::hardware_concurrency(); ++i)
+	for (auto i =std::thread::hardware_concurrency(); i > 0; --i)
 		pool.emplace_back([](){
 			int buf;
 			while (s.pop(buf)) {
