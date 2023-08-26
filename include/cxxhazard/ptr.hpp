@@ -63,11 +63,11 @@ public:
 	T *protect(const std::atomic<T *> &src) noexcept
 	{
 		while (true) {
-			void *copy = src.load(std::memory_order_relaxed);
+			void *copy = src.load(std::memory_order_acquire);
 
 			_holder->get()->_ptr.store(copy, std::memory_order_release);
 
-			if (copy == src.load(std::memory_order_relaxed)) {
+			if (copy == src.load(std::memory_order_acquire)) {
 				return static_cast<T *>(copy);
 			}
 		}
